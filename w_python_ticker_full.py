@@ -40,7 +40,8 @@ class TickerTape:
 if __name__ == "__main__":
     messages = load_ticker_text('ticker_text.yaml')
     root = tk.Tk()
-    root.geometry("1000x60") # This should be adjusted to the size of your screen
+    screen_width = root.winfo_screenwidth()  # get the screen width
+    root.geometry(f"{screen_width}x60")  # set the window width to the screen width
     ticker = TickerTape(root, messages)
     ticker.run()
     root.mainloop()
