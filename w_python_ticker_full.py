@@ -17,7 +17,7 @@ class TickerTape:
         self.master = master
         self.messages = cycle(messages) # to cycle through the list of messages
         self.label = tk.Label(master, text='', font=("Helvetica", 16), bg='black', fg='white', anchor='w')
-        self.label.pack(fill='both')
+        self.label.pack(fill='x')
 
     # Run the ticker
     def run(self):
@@ -40,7 +40,7 @@ class TickerTape:
 if __name__ == "__main__":
     messages = load_ticker_text('ticker_text.yaml')
     root = tk.Tk()
-    root.attributes('-fullscreen', True)
+    root.geometry("1000x60") # This should be adjusted to the size of your screen
     ticker = TickerTape(root, messages)
     ticker.run()
     root.mainloop()
