@@ -50,7 +50,7 @@ class TickerTape:
         Updates the label with the next message from the cycle.
         """
         message = next(self.messages)
-        message = ' ' * 300 + message                                                                                       # pad the message with spaces to fit screen width
+        message = ' ' * 200 + message                                                                                       # pad the message with spaces to fit screen width
         self.show_message(message)
 
     def show_message(self, message):
@@ -71,7 +71,7 @@ if __name__ == "__main__":                                                      
     messages = load_ticker_text('ticker_text.yaml')
     root = tk.Tk()
     screen_width = root.winfo_screenwidth()                                                                                 # get the screen width
-    root.geometry(f"{screen_width}x60")                                                                                     # set the window width to the screen width
+    root.geometry(f"{screen_width}x60+0+0")                                                                                     # set the window width to the screen width
     root.title("My Ticker Tape")                                                                                            # set the window title here
     ticker = TickerTape(root, messages)
     ticker.run()
