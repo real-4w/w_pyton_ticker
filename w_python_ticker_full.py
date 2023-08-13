@@ -2,8 +2,6 @@ import yaml
 import tkinter as tk
 from itertools import cycle
 from tkinter import font as tkFont
-import win32gui
-import win32con
 
 # Load ticker messages from yaml file
 def load_ticker_text(file_path):
@@ -45,22 +43,15 @@ class TickerTape:
 # Close the window with 'Esc' key
 def on_escape(event):
     root.quit()
-
-# Function to make the window transparent except for the text
-def set_transparent(window):
-    hwnd = win32gui.GetWindow(window.winfo_id())
-    win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE,
-                           win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
-    win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(0, 0, 0), 0, win32con.LWA_COLORKEY)
-
 # Main
 if __name__ == "__main__":
     messages = load_ticker_text('ticker_text.yaml')
     root = tk.Tk()
     screen_width = root.winfo_screenwidth()
-    root.geometry(f"{screen_width}x40+0+0")  # adjust for screen width
+    root.geometry(f"{screen_width}x40+0+0")
+    root.configure(bg='white')  # Set background color of window to white
     root.attributes('-topmost', True)
-    root.attributes('-alpha', 0.7)
+    root.attributes('-alpha', 0.7)  # This makes the window background completely transparent
     root.overrideredirect(True)
     root.bind('<Escape>', on_escape)
     ticker = TickerTape(root, messages)
