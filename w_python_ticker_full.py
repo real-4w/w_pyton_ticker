@@ -44,6 +44,12 @@ class TickerTape:
         Starts the ticker tape.
         """
         self.master.after(1000, self.update)                                                                                # Update every 1 second
+    def get_text_width(text, font):
+        temp = tk.Tk()
+        temp.withdraw()  # make sure it's not shown
+        width = tk.Font(font=font).measure(text)
+        temp.destroy()
+        return width
 
     def update(self):
         """
