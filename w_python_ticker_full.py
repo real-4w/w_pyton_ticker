@@ -73,7 +73,7 @@ if __name__ == "__main__":                                                      
     screen_width = root.winfo_screenwidth()                                                                                 # get the screen width
     root.geometry(f"{screen_width}x60+0+0")                                                                                 # set the window width to the screen width
     root.attributes('-topmost', True)                                                                                       # keep the window on top of other windows
-    root.title("My Ticker Tape")                                                                                            # set the window title here
+    root.title("Willem Ticker Tape")                                                                                        # set the window title here
     ticker = TickerTape(root, messages)
     ticker.run()
     root.mainloop()
