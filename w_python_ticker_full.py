@@ -43,7 +43,7 @@ class TickerTape:
         """
         self.master = master
         self.messages = cycle(messages)                                                                                     # to cycle through the list of messages
-        self.label = tk.Label(master, text='', font=("Helvetica", 16), bg='black', fg='white', anchor='w')
+        self.label = tk.Label(master, text='', font=("Helvetica", 16), bg='black', fg='white', anchor='w', pady=5)
         self.label.pack(fill='x')
 
     def run(self):
@@ -58,12 +58,15 @@ class TickerTape:
         """
         message = next(self.messages)
         # Calculate the padding required to start the message from the right edge of the screen
+        self.label.config(text=next(self.messages))
+        self.master.after(1000, self.update) # Update every 1 second
+        
         text_pixel_width = get_text_width(message, ("Helvetica", 16))
         spaces_needed = (self.master.winfo_screenwidth() - text_pixel_width) // tk.Font(font=("Helvetica", 16)).measure(' ')
         padding = ' ' * spaces_needed
         message = padding + message
         self.show_message(message)
-        #message = ' ' * 200 + message                                                                                       # pad the message with spaces to fit screen width
+        message = ' ' * 200 + message                                                                                       # pad the message with spaces to fit screen width
    
     def show_message(self, message):
         """
