@@ -52,22 +52,19 @@ class TickerTape:
         """
         self.master.after(1000, self.update)                                                                                # Update every 1 second
     
-   
-
     def update(self):
         """
         Updates the label with the next message from the cycle.
         """
         message = next(self.messages)
         # Calculate the padding required to start the message from the right edge of the screen
-        text_pixel_width = tk.get_text_width(message, ("Helvetica", 16))
+        text_pixel_width = get_text_width(message, ("Helvetica", 16))
         spaces_needed = (self.master.winfo_screenwidth() - text_pixel_width) // tk.Font(font=("Helvetica", 16)).measure(' ')
         padding = ' ' * spaces_needed
         message = padding + message
         self.show_message(message)
         #message = ' ' * 200 + message                                                                                       # pad the message with spaces to fit screen width
-        
-
+   
     def show_message(self, message):
         """
         Displays the current message and recursively calls itself to scroll the message.
