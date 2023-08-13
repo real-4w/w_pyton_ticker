@@ -71,9 +71,11 @@ if __name__ == "__main__":                                                      
     messages = load_ticker_text('ticker_text.yaml')
     root = tk.Tk()
     screen_width = root.winfo_screenwidth()                                                                                 # get the screen width
-    root.geometry(f"{screen_width}x60+0+0")                                                                                 # set the window width to the screen width
+    root.geometry(f"{screen_width}x20+0+0")                                                                                 # set the window width to the screen width
     root.attributes('-topmost', True)                                                                                       # keep the window on top of other windows
     root.title("Willem Ticker Tape")                                                                                        # set the window title here
+    root.overrideredirect(True)
+    root.attributes('-alpha', 0.7)  # making the window transparent
     ticker = TickerTape(root, messages)
     ticker.run()
     root.mainloop()
