@@ -14,31 +14,30 @@ class TickerTape:
         self.master = master
         self.messages = cycle(messages)
         self.font = tkFont.Font(font=("Helvetica", 16))
-        self.label = tk.Label(master, text='', font=self.font, bg='black', fg='white')
+        self.label = tk.Label(master, text='', font=self.font, fg='black')
         self.label.pack(fill='x')
+        self.text_pixel_width = 0
 
     def scroll(self):
-        # Move the label left by reducing the x position
-        x = self.label.winfo_x()
-        x -= 5  # Move left by 5 pixels; adjust to change speed
+        x = self.label.winfo_x() - 5  # Move left by 5 pixels
 
-        if x + self.text_pixel_width <= 0:  # If text has fully moved out of the screen to the left
-            self.label.place(x=self.master.winfo_screenwidth())  # Reset position to the right edge
+        if x + self.text_pixel_width <= 0:
             self.update()
+            self.label.place(x=self.master.winfo_screenwidth())  # Reset position to the right edge
         else:
             self.label.place(x=x)
-            self.master.after(100, self.scroll)
+        
+        self.master.after(100, self.scroll)  # Continue to scroll
 
     def update(self):
         message = next(self.messages)
         self.text_pixel_width = self.font.measure(message)
-        # Set the message and initial position outside the right edge
         self.label.configure(text=message)
-        self.label.place(x=self.master.winfo_screenwidth(), anchor="nw")
-        self.scroll()
 
     def run(self):
         self.update()
+        self.scroll()
+
 
 # Close the window with 'Esc' key
 def on_escape(event):
@@ -51,7 +50,7 @@ if __name__ == "__main__":
     root.geometry(f"{screen_width}x40+0+0")
     root.configure(bg='white')  # Set background color of window to white
     root.attributes('-topmost', True)
-    root.attributes('-alpha', 0.7)  # This makes the window background completely transparent
+    root.attributes('-transparentcolor', 'white')  # This makes only the white color transparent
     root.overrideredirect(True)
     root.bind('<Escape>', on_escape)
     ticker = TickerTape(root, messages)
