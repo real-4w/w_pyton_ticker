@@ -1,96 +1,59 @@
-import yaml, tkinter as tk
+import yaml
+import tkinter as tk
 from itertools import cycle
+from tkinter import font as tkFont
 
-def load_ticker_text(file_path):                                        
+# Load ticker messages from yaml file
+def load_ticker_text(file_path):
     with open(file_path, 'r') as f:
-        try:
-            data = yaml.safe_load(f)
-        except yaml.YAMLError as exc:
-            print(exc)
+        data = yaml.safe_load(f)
     return data['messages']
 
-def get_text_width(text, font):
-    temp = tk.Tk()
-    temp.withdraw()  # make sure it's not shown
-    width = tk.Font(font=font).measure(text)
-    temp.destroy()
-    return width
-
-class TickerTape:                                                                                                               
-    """
-    TickerTape is a class that creates a scrolling ticker tape in a tkinter window.
-
-    The ticker tape scrolls messages from right to left across the window. 
-    The messages are loaded from a YAML file and are cycled continuously.
-
-    Attributes:
-        master (tkinter.Tk): The tkinter root widget.
-        messages (cycle): A cycle iterator of the messages to be displayed.
-        label (tkinter.Label): The label widget that displays the messages.
-
-    Methods:
-        run: Starts the ticker tape.
-        update: Updates the label with the next message from the cycle.
-        show_message: Displays the current message and recursively calls itself to scroll the message.
-    """
+class TickerTape:
     def __init__(self, master, messages):
-        """
-        Constructs all the necessary attributes for the TickerTape object.
-
-        Args:
-            master (tkinter.Tk): The tkinter root widget.
-            messages (list): The messages to be displayed.
-        """
         self.master = master
-        self.messages = cycle(messages)                                                                                     # to cycle through the list of messages
-        self.label = tk.Label(master, text='', font=("Helvetica", 16), bg='black', fg='white', anchor='w', pady=5)
+        self.messages = cycle(messages)
+        self.font = tkFont.Font(font=("Helvetica", 16))
+        self.label = tk.Label(master, text='', font=self.font, bg='black', fg='white')
         self.label.pack(fill='x')
 
-    def run(self):
-        """
-        Starts the ticker tape.
-        """
-        self.master.after(1000, self.update)                                                                                # Update every 1 second
-    
-    def update(self):
-        """
-        Updates the label with the next message from the cycle.
-        """
-        message = next(self.messages)
-        # Calculate the padding required to start the message from the right edge of the screen
-        self.label.config(text=next(self.messages))
-        self.master.after(1000, self.update) # Update every 1 second
-        
-        text_pixel_width = get_text_width(message, ("Helvetica", 16))
-        spaces_needed = (self.master.winfo_screenwidth() - text_pixel_width) // tk.Font(font=("Helvetica", 16)).measure(' ')
-        padding = ' ' * spaces_needed
-        message = padding + message
-        self.show_message(message)
-        message = ' ' * 200 + message                                                                                       # pad the message with spaces to fit screen width
-   
-    def show_message(self, message):
-        """
-        Displays the current message and recursively calls itself to scroll the message.
+    def scroll(self):
+        # Move the label left by reducing the x position
+        x = self.label.winfo_x()
+        x -= 5  # Move left by 5 pixels; adjust to change speed
 
-        Args:
-            message (str): The current state of the message as it scrolls.
-        """
-        self.label.config(text=message)
-        if len(message) > 1:                                                                                                # This will create a scrolling effect
-            next_message = message[1:]
-            self.master.after(100, lambda: self.show_message(next_message))
+        if x + self.text_pixel_width <= 0:  # If text has fully moved out of the screen to the left
+            self.label.place(x=self.master.winfo_screenwidth())  # Reset position to the right edge
+            self.update()
         else:
-            self.master.after(1000, self.update)                                                                            # Update after 1 second when there's no more message to scroll
+            self.label.place(x=x)
+            self.master.after(100, self.scroll)
 
-if __name__ == "__main__":                                                                                                  # Main body
+    def update(self):
+        message = next(self.messages)
+        self.text_pixel_width = self.font.measure(message)
+        # Set the message and initial position outside the right edge
+        self.label.configure(text=message)
+        self.label.place(x=self.master.winfo_screenwidth(), anchor="nw")
+        self.scroll()
+
+    def run(self):
+        self.update()
+
+# Close the window with 'Esc' key
+def on_escape(event):
+    root.quit()
+
+# Main
+if __name__ == "__main__":
     messages = load_ticker_text('ticker_text.yaml')
     root = tk.Tk()
-    screen_width = root.winfo_screenwidth()                                                                                 # get the screen width
-    root.geometry(f"{screen_width}x20+0+0")                                                                                 # set the window width to the screen width
-    root.attributes('-topmost', True)                                                                                       # keep the window on top of other windows
-    root.title("Willem Ticker Tape")                                                                                        # set the window title here
+    screen_width = root.winfo_screenwidth()
+    root.geometry(f"{screen_width}x40+0+0")  # adjust for screen width
+    root.attributes('-topmost', True)
+    root.attributes('-alpha', 0.7)
     root.overrideredirect(True)
-    root.attributes('-alpha', 0.7)  # making the window transparent
+    root.bind('<Escape>', on_escape)
     ticker = TickerTape(root, messages)
     ticker.run()
     root.mainloop()
