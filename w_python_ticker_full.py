@@ -9,6 +9,13 @@ def load_ticker_text(file_path):
             print(exc)
     return data['messages']
 
+def get_text_width(text, font):
+    temp = tk.Tk()
+    temp.withdraw()  # make sure it's not shown
+    width = tk.Font(font=font).measure(text)
+    temp.destroy()
+    return width
+
 class TickerTape:                                                                                                               
     """
     TickerTape is a class that creates a scrolling ticker tape in a tkinter window.
@@ -45,12 +52,7 @@ class TickerTape:
         """
         self.master.after(1000, self.update)                                                                                # Update every 1 second
     
-    def get_text_width(text, font):
-        temp = tk.Tk()
-        temp.withdraw()  # make sure it's not shown
-        width = tk.Font(font=font).measure(text)
-        temp.destroy()
-        return width
+   
 
     def update(self):
         """
@@ -58,7 +60,7 @@ class TickerTape:
         """
         message = next(self.messages)
         # Calculate the padding required to start the message from the right edge of the screen
-        text_pixel_width = get_text_width(message, ("Helvetica", 16))
+        text_pixel_width = tk.get_text_width(message, ("Helvetica", 16))
         spaces_needed = (self.master.winfo_screenwidth() - text_pixel_width) // tk.Font(font=("Helvetica", 16)).measure(' ')
         padding = ' ' * spaces_needed
         message = padding + message
